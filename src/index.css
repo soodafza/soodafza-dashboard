@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── متغیرهای CSS برای تم پویا ── */
+:root {
+  /* حالت روز */
+  --bg                 : #f9fafb;       /* پس‌زمینه */
+  --text               : #1f2937;       /* متن */
+  --surface            : #ffffff;       /* کارت/فرم/Table background */
+  --placeholder        : #6b7280;       /* placeholder */
+  --brand              : #dc2626;       /* رنگ اصلی (دکمه) */
+  --brand-dark         : #b91c1c;       /* هاور دکمه */
+  --header-bg-light    : rgba(0,0,0,0.05); /* هدر جدول روز */
+}
+
+.dark {
+  /* حالت شب */
+  --bg                 : #111827;
+  --text               : #f9fafb;
+  --surface            : #1f2937;
+  --placeholder        : #9ca3af;
+  --brand              : #dc2626;
+  --brand-dark         : #ef4444;
+  --header-bg-dark     : rgba(255,255,255,0.1); /* هدر جدول شب */
+}
+
+/* اعمال تم بر روی html */
+html {
+  background-color: var(--bg);
+  color:            var(--text);
+  transition:       background-color .3s, color .3s;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+
+/* ── فرم‌ها ── */
+input,
+textarea,
+select {
+  background-color: var(--surface)    !important;
+  color:            var(--text)       !important;
+  border:           1px solid var(--placeholder) !important;
+  border-radius:    .375rem           !important;
+  padding:          .5rem             !important;
+  transition:       background-color .3s, color .3s, border-color .3s;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder) !important;
+}
+
+/* ── کارت‌ها ── */
+.card {
+  background-color: var(--surface) !important;
+  color:            var(--text)    !important;
+  border-radius:    .5rem          !important;
+  box-shadow:       0 1px 2px rgba(0,0,0,0.1) !important;
+  padding:          1rem           !important;
+  transition:       background-color .3s, color .3s;
+}
+
+/* ── جدول‌ها ── */
+.table {
+  width:             100%;
+  background-color:  var(--surface) !important;
+  color:             var(--text)    !important;
+  border-radius:     .5rem          !important;
+  overflow-x:        auto;
+  border-collapse:   separate;
+  border-spacing:    0;
+  transition:        background-color .3s, color .3s;
+}
+
+.table thead th {
+  background-color: var(--header-bg-light) !important;
+  color:            var(--text)           !important;
+  padding:          .5rem;
+  text-align:       left;
+  font-weight:      600;
+  transition:       background-color .3s, color .3s;
+}
+
+.dark .table thead th {
+  background-color: var(--header-bg-dark) !important;
+}
+
+.table tbody tr:nth-child(odd) {
+  background-color: rgba(0,0,0,0.02) !important;
+}
+
+.table td {
+  padding: .5rem;
+  color:   var(--text) !important;
+}
+
+/* ── دکمهٔ یکنواخت ── */
+@layer base {
+  button {
+    background-color: var(--brand) !important;
+    color:            #fff        !important;
+    font-size:        .875rem     !important;
+    line-height:      1.25rem     !important;
+    padding:          .5rem 1rem  !important;
+    border:           none        !important;
+    border-radius:    .375rem     !important;
+    cursor:           pointer     !important;
+    transition:       background-color .2s, transform .1s;
+  }
+  button:hover,
+  button:focus {
+    background-color: var(--brand-dark) !important;
+    transform:        scale(1.02);
+  }
+}
+
+/* ── لینک فعال سایدبار ── */
+.sidebar-active {
+  background-color: rgba(220,38,38,0.2) !important;
+  color:            var(--brand)      !important;
+}
