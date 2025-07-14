@@ -15,18 +15,24 @@ export interface SaleItem {
 
 export interface Sale {
   id: string;
-  team: string;              // شعبه یا تیم فروش
+  team: string;
   invoiceNumber: string;
   customerName: string;
-  date: string;              // YYYY-MM-DD
+  date: string; // YYYY-MM-DD
   items: SaleItem[];
   note: string;
+  grossAmount: number;
+  discount: number;
+  vat: number;
+  taxableAmount: number;
   createdAt: string;
 }
 
+type NewSale = Omit<Sale, "id" | "createdAt">;
+
 interface SaleState {
   sales: Sale[];
-  addSale: (s: Omit<Sale, "id" | "createdAt">) => void;
+  addSale: (s: NewSale) => void;
   updateSale: (s: Sale) => void;
   deleteSale: (id: string) => void;
 }
@@ -43,7 +49,7 @@ function diffStock(oldItems: SaleItem[], newItems: SaleItem[]) {
     map.set(it.productId, (map.get(it.productId) ?? 0) - it.qty)
   ); // - جدید
 
-  return map; // مقدار نهایی: مثبت یعنی باید موجودی ↑، منفی یعنی ↓
+  return map;
 }
 
 /* ـــــــــــ Store ـــــــــــ */
@@ -60,7 +66,7 @@ export const useSaleStore = create<SaleState>()(
           const sale: Sale = {
             ...data,
             id: uuid(),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           };
           return { sales: [...st.sales, sale] };
         }),
@@ -71,7 +77,6 @@ export const useSaleStore = create<SaleState>()(
           const idx = st.sales.findIndex((s) => s.id === sale.id);
           if (idx === -1) return st;
 
-          /* برگشت موجودی قدیم + کم کردن جدید */
           const delta = diffStock(st.sales[idx].items, sale.items);
           delta.forEach((d, pid) => adjustStock(pid, d));
 
@@ -85,11 +90,9 @@ export const useSaleStore = create<SaleState>()(
         set((st) => {
           const sale = st.sales.find((s) => s.id === id);
           if (sale)
-            sale.items.forEach((it) =>
-              adjustStock(it.productId, it.qty) // برگرداندن موجودی
-            );
+            sale.items.forEach((it) => adjustStock(it.productId, it.qty));
           return { sales: st.sales.filter((s) => s.id !== id) };
-        })
+        }),
     }),
     { name: "sales-storage" }
   )

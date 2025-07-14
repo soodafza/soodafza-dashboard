@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useProductStore, Product } from "../stores/productStore";
-import ProductTable from "../components/ProductTable";
-import ProductForm from "../components/ProductForm";
+import { useProductStore } from "../stores/productStore";
+import type { Product } from "../stores/productStore";
+import ProductTable from "../components/productTable";
+import ProductForm from "../components/productForm";
 
 export default function ProductsPage() {
   const { t } = useTranslation();

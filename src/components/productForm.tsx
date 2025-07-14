@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Product, useProductStore } from "../stores/productStore";
+import type { Product } from "../stores/productStore";
+import { useProductStore } from "../stores/productStore";
 
 type FormState = Omit<Product, "id" | "createdAt" | "qtyInStock">;
 
@@ -22,7 +23,7 @@ export default function ProductForm({ initial, onClose }: Props) {
       tireDate: "",
       lastPurchasePrice: 0,
       minPrice: 0,
-      maxPrice: 0
+      maxPrice: 0,
     }
   );
   const [err, setErr] = useState<{ productName?: string }>({});
@@ -33,18 +34,20 @@ export default function ProductForm({ initial, onClose }: Props) {
       setErr({ productName: t("required") });
       return;
     }
+
     const data: Product = {
       ...form,
       qtyInStock: qty,
       id: initial?.id ?? "",
-      createdAt: initial?.createdAt ?? ""
+      createdAt: initial?.createdAt ?? "",
     };
+
     initial ? updateProduct(data) : addProduct(data);
     onClose();
   };
 
   const set = (k: keyof FormState) => (v: string | number) =>
-    setForm({ ...form, [k]: v });
+    setForm((f) => ({ ...f, [k]: v }));
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">

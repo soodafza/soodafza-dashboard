@@ -1,4 +1,5 @@
-import Dexie, { Table } from 'dexie';
+import Dexie from 'dexie';
+import type { Table } from 'dexie';
 import { encrypt, decrypt } from './crypto';
 
 export interface Tx {
@@ -15,18 +16,34 @@ class StoreDB extends Dexie {
 
   constructor() {
     super('storeCashback');
-    this.version(1).stores({ tx: '&id, userId, ts, synced' });
-    this.tx.mapToClass(class implements Tx {
-      id = '';
-      userId = '';
-      amount = 0;
-      percent = 0;
-      ts = Date.now();
-      synced = false;
+
+    this.version(1).stores({
+      tx: '&id, userId, ts, synced'
     });
-    // crypto hook
-    this.on('creating', (_p, obj: Tx) => (obj as any).amount = encrypt(obj.amount));
-    this.on('reading', (obj: Tx) => ({ ...obj, amount: decrypt(obj.amount as any) }));
+
+    this.tx.mapToClass(
+      class implements Tx {
+        id = '';
+        userId = '';
+        amount = 0;
+        percent = 0;
+        ts = Date.now();
+        synced = false;
+      }
+    );
+
+    // 🔧 TypeScript-safe casting for Dexie hooks
+    (this as any).on('creating', (_p: any, obj: Tx) => {
+      (obj as any).amount = encrypt(obj.amount);
+    });
+
+    (this as any).on('reading', (obj: Tx) => {
+      return {
+        ...obj,
+        amount: decrypt(obj.amount as any),
+      };
+    });
   }
 }
+
 export const db = new StoreDB();

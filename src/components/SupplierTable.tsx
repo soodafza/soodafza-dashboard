@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Supplier, useSupplierStore } from "../stores/supplierStore";
+import type { Supplier, useSupplierStore } from "../stores/supplierStore";
 
 interface Props {
   data: Supplier[];

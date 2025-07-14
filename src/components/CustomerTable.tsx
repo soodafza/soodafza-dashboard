@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Customer, useCustomerStore } from "../stores/customerStore";
+import type { Customer, useCustomerStore } from "../stores/customerStore";
 
 interface Props {
   data: Customer[];                 // لیست فیلتر‌شده/کامل از بیرون می‌آید

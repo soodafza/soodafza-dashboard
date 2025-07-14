@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Supplier, useSupplierStore } from "../stores/supplierStore";
+import type { Supplier } from "../stores/supplierStore";
+import { useSupplierStore } from "../stores/supplierStore";
 
 type FormState = Omit<Supplier, "id" | "createdAt">;
 
@@ -20,17 +21,17 @@ export default function SupplierForm({ initial, onClose }: Props) {
       phone: "",
       email: "",
       address: "",
-      vatNumber: ""
+      vatNumber: "",
     }
   );
+
   const [err, setErr] = useState<Partial<Record<keyof FormState, string>>>({});
 
   const check = () => {
     const e: typeof err = {};
     if (!form.companyName.trim()) e.companyName = t("required");
     if (!/^\d{8,15}$/.test(form.phone)) e.phone = t("invalidPhone");
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email))
-      e.email = t("invalidEmail");
+    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) e.email = t("invalidEmail");
     setErr(e);
     return Object.keys(e).length === 0;
   };
@@ -43,7 +44,7 @@ export default function SupplierForm({ initial, onClose }: Props) {
   };
 
   const set = (k: keyof FormState) => (v: string) =>
-    setForm({ ...form, [k]: v });
+    setForm((prev) => ({ ...prev, [k]: v }));
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
