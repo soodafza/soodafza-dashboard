@@ -117,3 +117,8 @@ select {
 .item:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+/* Force all text in the app to be white & bold */
+#app, #app * {
+  color: #F9FAFB !important;
+  font-weight: 600 !important;
+}
