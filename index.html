@@ -1,0 +1,130 @@
+﻿<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#111827" />
+  <title>Soodafza • POS</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root{--pad:10px}
+    body.bg{min-height:100vh;margin:0}
+    header.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+    header h1{margin:0;font-size:26px}
+    #nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .7rem;border-radius:.5rem;border:1px solid #ffffff22;background:#1f2937;color:#e5e7eb;text-decoration:none;font:500 14px/1.2 system-ui}
+    .btn:hover{background:#374151}
+    .badge{display:inline-flex;align-items:center;padding:.35rem .6rem;border-radius:999px;background:#0ea5e9;color:white;font:600 12px/1 system-ui}
+    [data-theme="light"] .btn{background:#f3f4f6;color:#111827;border-color:#00000014}
+    [data-theme="light"] .btn:hover{background:#e5e7eb}
+  </style>
+
+  <!-- پیش‌تنظیم زبان/جهت و پوسته قبل از رندر برای جلوگیری از فلیکر -->
+  <script>
+    (function(){
+      const lang = localStorage.getItem("lang") || "fa";
+      document.documentElement.lang = lang;
+      document.documentElement.dir  = (lang === "fa" ? "rtl" : "ltr");
+      const theme = localStorage.getItem("theme") || "dark";
+      document.documentElement.dataset.theme = theme;
+      // همسان کردن theme-color نوار مرورگر
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", theme==="dark" ? "#111827" : "#f3f4f6");
+    })();
+  </script>
+</head>
+<body class="bg">
+  <header class="bar">
+    <h1>سودافزا - Soodafza</h1>
+    <nav id="nav"></nav>
+  </header>
+  <main id="app" class="container"></main>
+
+  <!-- NAV HOTFIX: منو را حتی قبل/بدون ماژول‌ها پایدار می‌کند -->
+  <script>
+    (function(){
+      function getLang(){ return localStorage.getItem("lang") || "fa"; }
+      function setLang(l){ localStorage.setItem("lang", l); document.documentElement.lang=l; document.documentElement.dir=(l==="fa"?"rtl":"ltr"); location.reload(); }
+      const dict = {
+        fa:{sale:"فروش",inventory:"موجودی",rider:"موتورسوار",wallet:"مشتری/کیف‌پول",map:"نقشه",subs:"اشتراک‌ها",order:"سفارش آنلاین",scan:"اسکن QR",signin:"ورود",logout:"خروج",offline:"آفلاین",theme:"پوسته",lang:"زبان"},
+        en:{sale:"Sales",inventory:"Inventory",rider:"Rider",wallet:"Customers/Wallet",map:"Map",subs:"Subscriptions",order:"Online Order",scan:"Scan QR",signin:"Sign in",logout:"Sign out",offline:"Offline",theme:"Theme",lang:"Language"}
+      };
+      function t(k){ const l=getLang(); return (dict[l] && dict[l][k]) || dict.fa[k] || k; }
+      function getTheme(){ return localStorage.getItem("theme") || "dark"; }
+      function toggleTheme(){ const n = getTheme() === "dark" ? "light" : "dark"; localStorage.setItem("theme", n); document.documentElement.dataset.theme=n; }
+
+      const ico = {
+        sale:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg>`,
+        inventory:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 4h18v4H3zM3 10h18v10H3z"/></svg>`,
+        rider:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M5 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm14 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM9 5h4l2 4h3l2 3-2 1h-4l-2-3H8z"/></svg>`,
+        wallet:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M2 7a3 3 0 0 1 3-3h12v3h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V7zm18 5h-5v2h5v-2z"/></svg>`,
+        map:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/></svg>`,
+        subs:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 7h18v10H3zM5 5h14v2H5zM7 9h6v6H7z"/></svg>`,
+        signin:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M10 17l5-5-5-5v3H3v4h7zM21 3h-8v2h8v14h-8v2h8a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>`,
+        cart:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 6h13l-2 8H8L6 4H3v2h3l1 6h10l1-4H8zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>`,
+        qr:`<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM17 13h4v4h-4zM13 17h4v4h-4z"/></svg>`
+      };
+
+      function renderNavHotfix(){
+        const nav = document.getElementById("nav");
+        if(!nav) return;
+        const offline = localStorage.getItem("OFFLINE_MODE")==="1";
+        const email = (JSON.parse(localStorage.getItem("session")||"{}").user||{}).email || "";
+        nav.innerHTML = `
+          <a class="btn" data-nav href="/">${ico.sale} ${t('sale')}</a>
+          <a class="btn" data-nav href="/admin/inventory">${ico.inventory} ${t('inventory')}</a>
+          <a class="btn" data-nav href="/customers">${ico.wallet} ${t('wallet')}</a>
+          <a class="btn" data-nav href="/delivery">${ico.rider} ${t('rider')}</a>
+          <a class="btn" data-nav href="/admin/tracking">${ico.map} ${t('map')}</a>
+          <a class="btn" data-nav href="/admin/subs">${ico.subs} ${t('subs')}</a>
+          <a class="btn" data-nav href="/shop">${ico.cart} ${t('order')}</a>
+          <a class="btn" data-nav href="/scan">${ico.qr} ${t('scan')}</a>
+          <button class="btn" id="themeBtn" title="${t('theme')}">🌓</button>
+          <button class="btn" id="langBtn"  title="${t('lang')}">${getLang().toUpperCase()}</button>
+          ${offline ? `<span class="badge">${t('offline')}</span>` : ``}
+          ${email ? `<span class="badge">${email}</span>` : `<a class="btn" data-nav href="/signin">${ico.signin} ${t('signin')}</a>`}
+        `;
+        document.getElementById("themeBtn")?.addEventListener("click", toggleTheme);
+        document.getElementById("langBtn") ?.addEventListener("click", ()=> setLang(getLang()==="fa"?"en":"fa"));
+
+        // هدایت بدون رفرش؛ اگر router.js حاضر نبود، fallback به رفرش کامل
+        nav.querySelectorAll('a[data-nav]').forEach(a=>{
+          a.addEventListener('click', async (e)=>{
+            try{
+              e.preventDefault();
+              history.pushState({},'',a.getAttribute('href'));
+              const r = await import('/src/router.js?v='+Date.now());
+              r.initRouter && r.initRouter();
+            }catch(err){
+              location.href = a.getAttribute('href');
+            }
+          });
+        });
+      }
+
+      window.addEventListener('popstate', ()=> {
+        import('/src/router.js?v='+Date.now()).then(r=>r.initRouter && r.initRouter()).catch(()=>{});
+      });
+
+      // فوراً منو را نشان بده
+      renderNavHotfix();
+      // اگر nav.js بعداً لود شد، کنترل را به نسخه‌ی ماژولی بسپار
+      import('/src/nav.js').then(m=>m.renderNav && m.renderNav()).catch(()=>{});
+    })();
+  </script>
+
+  <!-- ماژول‌های اصلی (پس از Hotfix) -->
+  <script type="module">
+    import "./src/state.js";
+    import { applyTheme } from "./src/theme.js";
+    import { initRouter } from "./src/router.js";
+    import { renderNav } from "./src/nav.js";
+
+    applyTheme();
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+    renderNav();
+    initRouter();
+  </script>
+</body>
+</html>
